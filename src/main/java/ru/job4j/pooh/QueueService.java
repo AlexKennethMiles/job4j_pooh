@@ -4,24 +4,22 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class QueueService implements Service {
-    private ConcurrentHashMap<String, ConcurrentLinkedQueue> map = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentLinkedQueue<String>> map = new ConcurrentHashMap<>();
 
     @Override
     public Resp process(Req req) {
-        Resp resp = null;
         if ("POST".equals(req.httpRequestType())) {
-            ConcurrentLinkedQueue<String> queue = map.putIfAbsent(req.getSourceName(), new ConcurrentLinkedQueue());
-            if (queue == null) {
-                queue = map.get(req.getSourceName());
-            }
-            queue.add(req.getParam());
-            resp = new Resp("", "200 OK");
+            map.putIfAbsent(req.getSourceName(), new ConcurrentLinkedQueue<>());
+            map.get(req.getSourceName()).add(req.getParam());
+            return new Resp("", "200 OK");
         } else if ("GET".equals(req.httpRequestType())) {
-            ConcurrentLinkedQueue<String> queue = map.get(req.getSourceName());
-            if (queue != null) {
-                resp = new Resp(queue.poll(), "200 OK");
-            }
+            ConcurrentLinkedQueue<String> queue = map.getOrDefault(req.getSourceName(), new ConcurrentLinkedQueue<>());
+            return new Resp(
+                    queue.isEmpty() ? "" : queue.poll(),
+                    "200 OK"
+            );
         }
-        return resp != null ? resp : new Resp("", "204 No Content");
+        return new Resp("", "501 Not Implemented");
     }
+
 }

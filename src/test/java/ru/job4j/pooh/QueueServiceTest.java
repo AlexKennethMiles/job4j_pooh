@@ -86,4 +86,14 @@ public class QueueServiceTest {
         );
         assertThat(temp.text()).isEqualTo("");
     }
+
+    @Test
+    public void whenDeleteButNotImplemented() {
+        QueueService queueService = new QueueService();
+        Resp temp = queueService.process(
+                new Req("DELETE", "queue", "weather", null)
+        );
+        assertThat(temp.text()).isEqualTo("");
+        assertThat(temp.status()).isEqualTo("501 Not Implemented");
+    }
 }

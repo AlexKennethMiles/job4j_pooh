@@ -133,4 +133,14 @@ public class TopicServiceTest {
         );
         assertThat(result2.text()).isNull();
     }
+
+    @Test
+    public void whenDeleteButNotImplemented() {
+        TopicService topicService = new TopicService();
+        Resp temp = topicService.process(
+                new Req("DELETE", "queue", "weather", null)
+        );
+        assertThat(temp.text()).isEqualTo("");
+        assertThat(temp.status()).isEqualTo("501 Not Implemented");
+    }
 }
