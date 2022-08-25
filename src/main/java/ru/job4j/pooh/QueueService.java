@@ -8,18 +8,19 @@ public class QueueService implements Service {
 
     @Override
     public Resp process(Req req) {
+        Resp rsl = new Resp("", "501 Not Implemented");
         if ("POST".equals(req.httpRequestType())) {
             map.putIfAbsent(req.getSourceName(), new ConcurrentLinkedQueue<>());
             map.get(req.getSourceName()).add(req.getParam());
-            return new Resp("", "200 OK");
+            rsl = new Resp("", "200 OK");
         } else if ("GET".equals(req.httpRequestType())) {
             ConcurrentLinkedQueue<String> queue = map.getOrDefault(req.getSourceName(), new ConcurrentLinkedQueue<>());
-            return new Resp(
+            rsl = new Resp(
                     queue.isEmpty() ? "" : queue.poll(),
                     "200 OK"
             );
         }
-        return new Resp("", "501 Not Implemented");
+        return rsl;
     }
 
 }
