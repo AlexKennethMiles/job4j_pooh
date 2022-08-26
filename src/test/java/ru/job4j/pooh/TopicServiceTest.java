@@ -131,7 +131,7 @@ public class TopicServiceTest {
         Resp result2 = topicService.process(
                 new Req("GET", "topic", "weather", paramForSubscriber1)
         );
-        assertThat(result2.text()).isNull();
+        assertThat(result2.text()).isEqualTo("");
     }
 
     @Test
